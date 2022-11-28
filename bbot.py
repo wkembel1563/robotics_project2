@@ -51,6 +51,7 @@ class BehavioralBot:
 
         control_signal = "move forward"
 
+        print("Wander: priority" + str(priority) + "signal: " + control_signal)
         return priority, control_signal
         
 
@@ -63,10 +64,11 @@ class BehavioralBot:
         control_signal = None
         priority = 0
         if distance and not touchSensor.pressed() and not touchSensor2.pressed():
-            if distance <= 70 and distance >= 30:
+            print("Distance to wall: " + str(distance))
+            if distance <= 70 and distance >= 35:
                 priority = 9
                 control_signal = "move forward"
-            elif distance < 30 and distance >= 0:
+            elif distance < 35 and distance >= 0:
                 priority = 9
                 control_signal = "slight left"
             elif distance <= 100 and distance > 70: 
@@ -84,6 +86,8 @@ class BehavioralBot:
         else: # turns right if bump and no distance
             priority = 9
             control_signal = "turn right"
+
+        print("WF: priority" + str(priority) + "signal: " + control_signal)
         return priority, control_signal
         
 
@@ -137,16 +141,24 @@ class BehavioralBot:
             self.forward_one()
 
         elif control_signal == "slight left":
-            rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(375, 1900, then=Stop.HOLD, wait=False)
-            leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(365, 1900, then=Stop.HOLD, wait=True)
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor.run_time(200, 500, then=Stop.HOLD, wait=False)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=True)
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            leftMotor.run_time(200, 500, then=Stop.HOLD, wait=True)
 
         elif control_signal == "slight right":
-            leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(375, 1900, then=Stop.HOLD, wait=False)
-            rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(365, 1900, then=Stop.HOLD, wait=True)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            leftMotor.run_time(200, 500, then=Stop.HOLD, wait=False)
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor.run_time(170, 500, then=Stop.HOLD, wait=True)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor.run_time(200, 500, then=Stop.HOLD, wait=True)
 
         elif control_signal == "turn right":
             self.turn_right()
@@ -182,8 +194,8 @@ class BehavioralBot:
         forward_angle = 360
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=False)
-        leftMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=True)
+        rightMotor.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=False)
+        leftMotor.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=True)
         #radius_from_center = .08565
         #rotational_vel_rad = 3.491
         #wheel_radius = .028
@@ -221,8 +233,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=True)
 
     # turn left 90 degrees function from project 1
     def turn_left(self):
@@ -249,8 +261,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=True)
 
     # move deeper into goal area
     def forward_to_candle(self):
