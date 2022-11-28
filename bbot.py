@@ -271,6 +271,7 @@ class BehavioralBot:
         rightMotor = Motor(motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         leftMotor = Motor(motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         while ColorSensor(self.color_port).color() == Color.GREEN and count < turn_limit:
+            print("finding left edge")
             rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
             leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
 
@@ -278,6 +279,7 @@ class BehavioralBot:
 
         # if edge not found, 1/2 original pos probably close to center
         if count == turn_limit:
+            print("left edge not found")
             rightMotor = Motor(motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
             leftMotor = Motor(motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
             while count//2 > 0:
@@ -292,6 +294,7 @@ class BehavioralBot:
             rightMotor = Motor(motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
             leftMotor = Motor(motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
             while ColorSensor(self.color_port).color() != Color.GREEN and count < turn_limit:
+                print("left edge found. finding green area again")
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
                 leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
 
@@ -300,11 +303,13 @@ class BehavioralBot:
             # if reset limit is reached, then mistake was made
             # do nothing and let another behavior take over
             if count == turn_limit:
+                print("reset limit reached")
                 return
 
             # check distance to right edge
             count = 0
             while ColorSensor(self.color_port).color() == Color.GREEN and count < turn_limit:
+                print("finding right edge ")
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
                 leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
 
@@ -315,6 +320,7 @@ class BehavioralBot:
             rightMotor = Motor(motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
             leftMotor = Motor(motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
             while count//2 > 0:
+                print("centering")
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
                 leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
 
