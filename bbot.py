@@ -142,23 +142,23 @@ class BehavioralBot:
 
         elif control_signal == "slight left":
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(200, 500, then=Stop.HOLD, wait=False)
+            rightMotor.run_time(220, 1000, then=Stop.HOLD, wait=False)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=True)
+            leftMotor.run_time(175, 1000, then=Stop.HOLD, wait=True)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
+            rightMotor.run_time(175, 700, then=Stop.HOLD, wait=False)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(200, 500, then=Stop.HOLD, wait=True)
+            leftMotor.run_time(220, 700, then=Stop.HOLD, wait=True)
 
         elif control_signal == "slight right":
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(200, 500, then=Stop.HOLD, wait=False)
+            leftMotor.run_time(220, 1000, then=Stop.HOLD, wait=False)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(170, 500, then=Stop.HOLD, wait=True)
+            rightMotor.run_time(175, 1000, then=Stop.HOLD, wait=True)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
+            leftMotor.run_time(175, 700, then=Stop.HOLD, wait=False)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(200, 500, then=Stop.HOLD, wait=True)
+            rightMotor.run_time(220, 700, then=Stop.HOLD, wait=True)
 
         elif control_signal == "turn right":
             self.turn_right()
@@ -166,12 +166,12 @@ class BehavioralBot:
         elif control_signal == "turn left":
             self.turn_left()
 
-        elif control_signal == "orient to candle":
-            self.face_candle()
+        # elif control_signal == "orient to candle":
+        #     self.face_candle()
 
-        elif control_signal == "extinguish fire":
-            self.run_fan()
-            self.play_celebration(ev3)
+        # elif control_signal == "extinguish fire":
+        #     self.run_fan()
+        #     self.play_celebration(ev3)
 
         elif control_signal == "do nothing":
             print("Error. Do nothing action givin highest priority.")
