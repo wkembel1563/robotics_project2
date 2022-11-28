@@ -78,7 +78,7 @@ class BehavioralBot:
             else:
                 priority = 2
                 control_signal = "turn right"
-        elif distance and touchSensor.pressed() or touchSensor2.pressed():
+        elif distance < 30 and touchSensor.pressed() or touchSensor2.pressed():
             priority = 9
             control_signal = "turn left"
         else: # turns right if bump and no distance
@@ -96,16 +96,13 @@ class BehavioralBot:
         # check color sensor
         # high priority if green, otherwise 0
         if ColorSensor(self.color_port).color() == Color.GREEN and not self.orient_to_candle:
-            print("switching priority")
             priority = 10
 
         # search for candle 
         # move forward 1/4m once green has been detected
         if priority > 0:
-            print("switching signal")
             control_signal = "orient to candle"
         else:
-            print("switching signal 2")
             control_signal = "do nothing"
 
         return priority, control_signal
@@ -269,7 +266,7 @@ class BehavioralBot:
     # move forward 1/4m (1/4 square tile) to extinguish the candle
     def face_candle(self):
 
-        turn_limit = 36
+        turn_limit = 10
         rotation_angle = 20
         count = 0
 
@@ -298,8 +295,8 @@ class BehavioralBot:
         else:
             # reset to green
             count = 0
-            rightMotor = Motor(motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-            leftMotor = Motor(motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
             while ColorSensor(self.color_port).color() != Color.GREEN and count < turn_limit:
                 print("left edge found. finding green area again")
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
