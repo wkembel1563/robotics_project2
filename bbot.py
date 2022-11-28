@@ -86,20 +86,23 @@ class BehavioralBot:
     def goal_detection(self):
         # HIGH = 10
         # LOW = 0
-        control_signal = None
+        control_signal = ""
         priority = 0
 
         # check color sensor
         # high priority if green, otherwise 0
         if ColorSensor(self.color_port).color() == Color.GREEN and not self.orient_to_candle:
+            print("switching priority")
             priority = 10
 
         # search for candle 
         # move forward 1/4m once green has been detected
-        if priority == 10:
-            control_signal == "orient to candle"
+        if priority > 0:
+            print("switching signal")
+            control_signal = "orient to candle"
         else:
-            control_signal == "do nothing"
+            print("switching signal 2")
+            control_signal = "do nothing"
 
         return priority, control_signal
 
@@ -268,35 +271,35 @@ class BehavioralBot:
 
         # find left edge of goal area
         # move left until green color is gone, mark angle
-        rightMotor = Motor(motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        leftMotor = Motor(motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         while ColorSensor(self.color_port).color() == Color.GREEN and count < turn_limit:
             print("finding left edge")
             rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
-            leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
+            leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=True)
 
             count = count + 1
 
         # if edge not found, 1/2 original pos probably close to center
         if count == turn_limit:
             print("left edge not found")
-            rightMotor = Motor(motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor = Motor(motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
             while count//2 > 0:
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
-                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
+                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=True)
 
                 count = count - 1
 
         else:
             # reset to green
             count = 0
-            rightMotor = Motor(motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor = Motor(motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            rightMotor = Motor(motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            leftMotor = Motor(motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
             while ColorSensor(self.color_port).color() != Color.GREEN and count < turn_limit:
                 print("left edge found. finding green area again")
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
-                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
+                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=True)
 
                 count = count + 1
 
@@ -311,18 +314,18 @@ class BehavioralBot:
             while ColorSensor(self.color_port).color() == Color.GREEN and count < turn_limit:
                 print("finding right edge ")
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
-                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
+                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=True)
 
                 count = count + 1
 
             # move to center of right turn arc
             # this is the probably center of goal square
-            rightMotor = Motor(motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-            leftMotor = Motor(motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
             while count//2 > 0:
                 print("centering")
                 rightMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
-                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=False)
+                leftMotor.run_angle(speed=90, rotation_angle=rotation_angle, then=Stop.HOLD, wait=True)
 
                 count = count - 1
             
