@@ -266,8 +266,41 @@ class BehavioralBot:
         leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
         leftMotor.run_time(375, 1915//4, then=Stop.HOLD, wait=True)
 
-    # move forward 1/4m (1/4 square tile) to extinguish the candle
+    def orient_turn(self, angle, direction):
+        if direction == "L":
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            rightMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=False)
+            leftMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=True)
+
+        elif direction == "R":
+            rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=False)
+            leftMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=True)
+
+        else:
+            print("Error, no direction specified")
+
     def face_candle(self):
+        # turn left 
+        rotation_angle = 20
+        self.orient_turn(rotation_angle, "L")
+
+        # let robot settle
+        time.wait(1)
+
+        # check sensor
+        # if still green, turn back and extinguish
+        if ColorSensor(self.color_port).color() == Color.GREEN:
+            self.orient_turn(rotation_angle, "R")
+            self.orient_to_candle = True
+
+        # if not green, turn back, move forward, extinguish
+        elif ColorSensor(self.color_port).color() == Color.GREEN:
+
+    # move forward 1/4m (1/4 square tile) to extinguish the candle
+    def face_candle_old(self):
 
         turn_limit = 36
         rotation_angle = 20
