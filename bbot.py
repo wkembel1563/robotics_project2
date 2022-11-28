@@ -279,7 +279,7 @@ class BehavioralBot:
         self.orient_turn(rotation_angle, "L")
 
         # let robot settle
-        time.wait(1)
+        time.sleep(1)
 
         # check sensor
         # if still green, turn back and extinguish
