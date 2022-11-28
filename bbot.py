@@ -179,19 +179,24 @@ class BehavioralBot:
 
     # forward function from project 1
     def forward_one(self):
-        radius_from_center = .08565
-        rotational_vel_rad = 3.491
-        wheel_radius = .028
-        rotational_vel_deg = rotational_vel_rad * (180/math.pi)
+        forward_angle = 360
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        rightMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=False)
+        leftMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=True)
+        #radius_from_center = .08565
+        #rotational_vel_rad = 3.491
+        #wheel_radius = .028
+        #rotational_vel_deg = rotational_vel_rad * (180/math.pi)
 
-        t = (radius_from_center / (2*rotational_vel_rad * wheel_radius)) * (math.pi/2)
-        ms = t * 1000
+        #t = (radius_from_center / (2*rotational_vel_rad * wheel_radius)) * (math.pi/2)
+        #ms = t * 1000
 
-        rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_time(375, 1900, then=Stop.HOLD, wait=False)
+        #rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
+        #rightMotor.run_time(375, 1900, then=Stop.HOLD, wait=False)
 
-        leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-        leftMotor.run_time(375, 1915, then=Stop.HOLD, wait=True)
+        #leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
+        #leftMotor.run_time(375, 1915, then=Stop.HOLD, wait=True)
 
     # turn right 90 degrees function from project 1
     def turn_right(self):
