@@ -6,6 +6,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
+import math
 
 class BehavioralBot:
     def __init__(self):
@@ -36,13 +37,15 @@ class BehavioralBot:
     """
     def wander(self):
         priority = 0
-
         sensor = UltrasonicSensor(self.ultrasonic_port)
         distance = sensor.distance()
         touchSensor = TouchSensor(self.touch_port)
-        ultrasonicPort = self.ultrasonic_port
-        if distance and touchSensor.pressed() != True and distance > 100: #If we are too far away from the wall, Wander.
+        if distance and not touchSensor.pressed() and distance > 100: #If we are too far away from the wall, Wander.
             priority = 8
+        elif not distance and not touchSensor.pressed():
+            priority = 8
+        else:
+            priority = 0
 
         control_signal = "move forward"
 
@@ -51,25 +54,32 @@ class BehavioralBot:
 
     def wall_following(self):
         sensor = UltrasonicSensor(self.ultrasonic_port)
+        touchSensor = TouchSensor(self.touch_port)
         distance = sensor.distance()
         control_signal = None
         priority = 0
-        if distance:
+        if distance and not touchSensor.pressed():
             if distance <= 30 and distance >= 10:
                 priority = 9
                 control_signal = "move forward"
             elif distance < 10 and distance >= 0:
-                priority = 8
+                priority = 9
                 control_signal = "slight left"
             elif distance <= 70 and distance > 30: 
-                priority = 8
+                priority = 9
                 control_signal = "slight right"
             elif distance <= 100 and distance > 70: 
                 priority = 6
                 control_signal = "slight right"
             else:
                 priority = 2
-                control_signal = "move forward"
+                control_signal = "turn right"
+        elif distance and touchSensor.pressed():
+            priority = 9
+            control_signal = "turn left"
+        else: # turns right if bump and no distance
+            priority = 9
+            control_signal = "turn right"
         return priority, control_signal
         
 
@@ -120,19 +130,25 @@ class BehavioralBot:
         print("EXECUTING: " + control_signal)
 
         if control_signal == "move forward":
-            self.forward()
+            self.forward_one()
 
         elif control_signal == "slight left":
-            rightMotor = Motor(Port.A, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-            rightMotor.run_time(10, 1, then=Stop.HOLD, wait=False)
+            rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
+            rightMotor.run_time(375, 1900, then=Stop.HOLD, wait=False)
             leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(10, 1, then=Stop.HOLD, wait=True)
+            leftMotor.run_time(365, 1900, then=Stop.HOLD, wait=True)
 
         elif control_signal == "slight right":
-            leftMotor = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-            leftMotor.run_time(10, 1, then=Stop.HOLD, wait=False)
+            leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
+            leftMotor.run_time(375, 1900, then=Stop.HOLD, wait=False)
             rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(10, 1, then=Stop.HOLD, wait=True)
+            rightMotor.run_time(365, 1900, then=Stop.HOLD, wait=True)
+
+        elif control_signal == "turn right":
+            self.turn_right()
+
+        elif control_signal == "turn left":
+            self.turn_left()
 
         elif control_signal == "orient to candle":
             self.face_candle()
@@ -156,8 +172,6 @@ class BehavioralBot:
 
     i.e. turn_right_x(), forward(), etc. 
     """
-    def forward(self):
-        Motor.run_angle(10, 90, then=Stop.HOLD, wait=True)
 
     # forward function from project 1
     def forward_one(self):
@@ -177,31 +191,57 @@ class BehavioralBot:
 
     # turn right 90 degrees function from project 1
     def turn_right(self):
-        radius_from_center = .08565
-        rotational_vel_rad = 2 #3.491
-        wheel_radius = .028
-        rotational_vel_deg = rotational_vel_rad * (180/math.pi)
-        t = (radius_from_center / (2*rotational_vel_rad * wheel_radius)) * (math.pi/2)
-        ms = t * 1000
+        # define the motors
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        leftMotor.run_time(rotational_vel_deg, ms*2, then=Stop.HOLD, wait=False)
-        rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_time(rotational_vel_deg, ms*2 - 300, then=Stop.HOLD, wait=True)
+        # reverse first because every time a turn is activated it will come after a collision
+        leftMotor.run_time(300, 900, then=Stop.HOLD, wait=False)
+        rightMotor.run_time(300, 900, then=Stop.HOLD, wait=True)
+
+        robot_radius = 0.08565 # radius of robot in (m), defined with caliper
+        arc_len = (1/4) * 2 * math.pi * robot_radius
+
+        wheel_radius = 0.033 # defined in in (m) using calipers
+        move_angle = arc_len / wheel_radius
+
+        # convert angle to degrees
+        move_angle_deg = move_angle * (180/math.pi)
+
+        # turn
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=True)
 
     # turn left 90 degrees function from project 1
     def turn_left(self):
-        radius_from_center = .08565
-        rotational_vel_rad = 2 #3.491
-        wheel_radius = .028
-        rotational_vel_deg = rotational_vel_rad * (180/math.pi)
-        t = (radius_from_center / (2*rotational_vel_rad * wheel_radius)) * (math.pi/2)
-        ms = t * 1000
 
-        rightMotor = Motor(Port.A, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        rightMotor.run_time(rotational_vel_deg, ms*2, then=Stop.HOLD, wait=False)
-        leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-        leftMotor.run_time(rotational_vel_deg, ms*2-100, then=Stop.HOLD, wait=True)
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+
+        # reverse first because every time a turn is activated it will come after a collision
+        leftMotor.run_time(300, 900, then=Stop.HOLD, wait=False)
+        rightMotor.run_time(300, 900, then=Stop.HOLD, wait=True)
+
+        robot_radius = 0.08565 # radius of robot in (m), defined with caliper
+        arc_len = (1/4) * 2 * math.pi * robot_radius
+
+        # find angle wheel needs to move through
+        # move_angle * wheel_radius = arc_len
+        wheel_radius = 0.033 # defined in in (m) using calipers
+        move_angle = arc_len / wheel_radius
+
+        # convert angle to degrees
+        move_angle_deg = move_angle * (180/math.pi)
+
+        # turn
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=True)
 
     # move forward 1/4m (1/4 square tile) to extinguish the candle
     def forward_to_candle(self):
