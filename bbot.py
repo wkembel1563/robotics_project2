@@ -59,16 +59,16 @@ class BehavioralBot:
         control_signal = None
         priority = 0
         if distance and not touchSensor.pressed():
-            if distance <= 30 and distance >= 10:
+            if distance <= 70 and distance >= 30:
                 priority = 9
                 control_signal = "move forward"
-            elif distance < 10 and distance >= 0:
+            elif distance < 30 and distance >= 0:
                 priority = 9
                 control_signal = "slight left"
-            elif distance <= 70 and distance > 30: 
+            elif distance <= 100 and distance > 70: 
                 priority = 9
                 control_signal = "slight right"
-            elif distance <= 100 and distance > 70: 
+            elif distance <= 130 and distance > 100: 
                 priority = 6
                 control_signal = "slight right"
             else:
@@ -212,8 +212,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=True)
 
     # turn left 90 degrees function from project 1
     def turn_left(self):
@@ -240,8 +240,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=True)
 
     # move forward 1/4m (1/4 square tile) to extinguish the candle
     def forward_to_candle(self):
