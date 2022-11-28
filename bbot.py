@@ -78,7 +78,7 @@ class BehavioralBot:
             else:
                 priority = 2
                 control_signal = "turn right"
-        elif distance < 30 and touchSensor.pressed() or touchSensor2.pressed():
+        elif distance < 75 and (touchSensor.pressed() or touchSensor2.pressed()):
             priority = 9
             control_signal = "turn left"
         else: # turns right if bump and no distance
@@ -200,8 +200,8 @@ class BehavioralBot:
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
         # reverse first because every time a turn is activated it will come after a collision
-        leftMotor.run_time(300, 900, then=Stop.HOLD, wait=False)
-        rightMotor.run_time(300, 900, then=Stop.HOLD, wait=True)
+        leftMotor.run_time(300, 900-400, then=Stop.HOLD, wait=False)
+        rightMotor.run_time(300, 900-400, then=Stop.HOLD, wait=True)
 
         robot_radius = 0.08565 # radius of robot in (m), defined with caliper
         arc_len = (1/4) * 2 * math.pi * robot_radius
@@ -216,8 +216,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=True)
 
     # turn left 90 degrees function from project 1
     def turn_left(self):
@@ -226,8 +226,8 @@ class BehavioralBot:
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
         # reverse first because every time a turn is activated it will come after a collision
-        leftMotor.run_time(300, 900, then=Stop.HOLD, wait=False)
-        rightMotor.run_time(300, 900, then=Stop.HOLD, wait=True)
+        leftMotor.run_time(300, 900-400, then=Stop.HOLD, wait=False)
+        rightMotor.run_time(300, 900-400, then=Stop.HOLD, wait=True)
 
         robot_radius = 0.08565 # radius of robot in (m), defined with caliper
         arc_len = (1/4) * 2 * math.pi * robot_radius
@@ -244,8 +244,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-10, then=Stop.HOLD, wait=True)
 
     # move deeper into goal area
     def forward_to_candle(self):
