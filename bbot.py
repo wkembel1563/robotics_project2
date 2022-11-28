@@ -12,7 +12,7 @@ class BehavioralBot:
         self.orient_to_candle = False
         self.touch_port = Port.S1      
         self.color_port = Port.S3      
-        self.fan_port = Port.S4       
+        self.fan_port = Port.D
         self.ultrasonic_port = Port.S2 
         self.motorL_port = Port.A
         self.motorR_port = Port.B
