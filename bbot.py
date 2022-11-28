@@ -250,22 +250,15 @@ class BehavioralBot:
         leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=False)
         rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-5, then=Stop.HOLD, wait=True)
 
-    # move forward 1/4m (1/4 square tile) to extinguish the candle
+    # move deeper into goal area
     def forward_to_candle(self):
-        radius_from_center = .08565
-        rotational_vel_rad = 3.491
-        wheel_radius = .028
-        rotational_vel_deg = rotational_vel_rad * (180/math.pi)
+        forward_angle = 30
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        rightMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=False)
+        leftMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=True)
 
-        t = (radius_from_center / (2*rotational_vel_rad * wheel_radius)) * (math.pi/2)
-        ms = t * 1000
-
-        rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_time(375, 1900//4, then=Stop.HOLD, wait=False)
-
-        leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-        leftMotor.run_time(375, 1915//4, then=Stop.HOLD, wait=True)
-
+    # make small turns to help define goal area
     def orient_turn(self, angle, direction):
         if direction == "L":
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
@@ -282,9 +275,10 @@ class BehavioralBot:
         else:
             print("Error, no direction specified")
 
+    # orient towards the candle
     def face_candle(self):
         # turn left 
-        rotation_angle = 20
+        rotation_angle = 30
         self.orient_turn(rotation_angle, "L")
 
         # let robot settle
@@ -297,7 +291,10 @@ class BehavioralBot:
             self.orient_to_candle = True
 
         # if not green, turn back, move forward, extinguish
-        elif ColorSensor(self.color_port).color() == Color.GREEN:
+        else:
+            self.orient_turn(rotation_angle, "R")
+            self.forward_to_candle()
+            self.orient_to_candle = True
 
     # move forward 1/4m (1/4 square tile) to extinguish the candle
     def face_candle_old(self):
