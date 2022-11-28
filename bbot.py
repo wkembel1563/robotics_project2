@@ -12,6 +12,7 @@ class BehavioralBot:
     def __init__(self):
         self.orient_to_candle = False
         self.touch_port = Port.S1      
+        self.touch_port2 = Port.S4
         self.color_port = Port.S3      
         self.fan_port = Port.D
         self.ultrasonic_port = Port.S2 
@@ -40,7 +41,8 @@ class BehavioralBot:
         sensor = UltrasonicSensor(self.ultrasonic_port)
         distance = sensor.distance()
         touchSensor = TouchSensor(self.touch_port)
-        if distance and not touchSensor.pressed() and distance > 100: #If we are too far away from the wall, Wander.
+        touchSensor2 = TouchSensor(self.touch_port2)
+        if distance and not touchSensor.pressed() and not touchSensor2.pressed() and distance > 100: #If we are too far away from the wall, Wander.
             priority = 8
         elif not distance and not touchSensor.pressed():
             priority = 8
@@ -55,10 +57,12 @@ class BehavioralBot:
     def wall_following(self):
         sensor = UltrasonicSensor(self.ultrasonic_port)
         touchSensor = TouchSensor(self.touch_port)
+        touchSensor2 = TouchSensor(self.touch_port2)
+
         distance = sensor.distance()
         control_signal = None
         priority = 0
-        if distance and not touchSensor.pressed():
+        if distance and not touchSensor.pressed() and not touchSensor2.pressed():
             if distance <= 70 and distance >= 30:
                 priority = 9
                 control_signal = "move forward"
@@ -74,7 +78,7 @@ class BehavioralBot:
             else:
                 priority = 2
                 control_signal = "turn right"
-        elif distance and touchSensor.pressed():
+        elif distance and touchSensor.pressed() or touchSensor2.pressed():
             priority = 9
             control_signal = "turn left"
         else: # turns right if bump and no distance
