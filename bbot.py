@@ -19,6 +19,14 @@ class BehavioralBot:
         self.motorL_port = Port.A
         self.motorR_port = Port.B
         self.lastDistance = 0
+        self.rightMotor_L = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.leftMotor_L = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        self.rightMotor_R = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        self.leftMotor_R = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.rightMotor_F = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.leftMotor_F = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.rightMotor_B = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        self.leftMotor_B = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
     """
     BEHAVIORS
@@ -134,19 +142,19 @@ class BehavioralBot:
     
     def reverse(self):
         # define the motors
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
         # reverse first because every time a turn is activated it will come after a collision
-        leftMotor.run_time(300, 900-400, then=Stop.HOLD, wait=False)
-        rightMotor.run_time(300, 900-400, then=Stop.HOLD, wait=True)
+        self.leftMotor_B.run_time(300, 900-400, then=Stop.HOLD, wait=False)
+        self.rightMotor_B.run_time(300, 900-400, then=Stop.HOLD, wait=True)
     
     def turn_corner(self):
-        rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_time(200, 400, then=Stop.HOLD, wait=False)
+        #rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.rightMotor_F.run_time(200, 400, then=Stop.HOLD, wait=False)
 
-        leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-        leftMotor.run_time(200, 400, then=Stop.HOLD, wait=True)
+        #leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.leftMotor_F.run_time(200, 400, then=Stop.HOLD, wait=True)
         robot_radius = 0.08565 # radius of robot in (m), defined with caliper
         arc_len = (1/4) * 2 * math.pi * robot_radius
 
@@ -157,11 +165,11 @@ class BehavioralBot:
         move_angle_deg = move_angle * (180/math.pi)
 
         # turn
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
+        self.leftMotor_R.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
+        self.rightMotor_R.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
 
 
     """
@@ -176,24 +184,26 @@ class BehavioralBot:
             self.forward_one()
 
         elif control_signal == "slight left":
-            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(300, 500, then=Stop.HOLD, wait=False)
-            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=True)
-            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
-            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(220, 500, then=Stop.HOLD, wait=True)
+            #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.rightMotor_F.run_time(300, 500, then=Stop.HOLD, wait=False)
+            #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.leftMotor_F.run_time(175, 500, then=Stop.HOLD, wait=True)
+
+            #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.rightMotor_F.run_time(175, 500, then=Stop.HOLD, wait=False)
+            #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.leftMotor_F.run_time(220, 500, then=Stop.HOLD, wait=True)
 
         elif control_signal == "slight right":
-            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(300, 500, then=Stop.HOLD, wait=False)
-            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(175, 500, then=Stop.HOLD, wait=True)
-            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
-            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(220, 500, then=Stop.HOLD, wait=True)
+            #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.leftMotor_F.run_time(300, 500, then=Stop.HOLD, wait=False)
+            #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.rightMotor_F.run_time(175, 500, then=Stop.HOLD, wait=True)
+
+            #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.leftMotor_F.run_time(175, 500, then=Stop.HOLD, wait=False)
+            #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.rightMotor_F.run_time(220, 500, then=Stop.HOLD, wait=True)
 
         elif control_signal == "turn corner":
             self.turn_corner()
@@ -230,10 +240,10 @@ class BehavioralBot:
     # forward function from project 1
     def forward_one(self):
         forward_angle = 180
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=False)
-        leftMotor.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=True)
+        #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.rightMotor_F.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=False)
+        self.leftMotor_F.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=True)
         # radius_from_center = .08565
         # rotational_vel_rad = 3.491
         # wheel_radius = .028
@@ -263,11 +273,11 @@ class BehavioralBot:
         move_angle_deg = move_angle * (180/math.pi)
 
         # turn
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
+        self.leftMotor_R.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
+        self.rightMotor_R.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
 
     # turn left 90 degrees function from project 1
     def turn_left(self):
@@ -286,33 +296,33 @@ class BehavioralBot:
         move_angle_deg = move_angle * (180/math.pi)
 
         # turn
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
+        self.leftMotor_L.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
+        self.rightMotor_L.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
 
     # move deeper into goal area
     def forward_to_candle(self):
         forward_angle = 30
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=False)
-        leftMotor.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=True)
+        #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.rightMotor_F.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=False)
+        self.leftMotor_F.run_angle(speed=90, rotation_angle=forward_angle, then=Stop.HOLD, wait=True)
 
     # make small turns to help define goal area
     def orient_turn(self, angle, direction):
         if direction == "L":
-            rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-            rightMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=False)
-            leftMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=True)
+            #rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            #leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            self.rightMotor_L.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=False)
+            self.leftMotor_L.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=True)
 
         elif direction == "R":
-            rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-            leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=False)
-            leftMotor.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=True)
+            #rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+            #leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+            self.rightMotor_R.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=False)
+            self.leftMotor_R.run_angle(speed=90, rotation_angle=angle, then=Stop.HOLD, wait=True)
 
         else:
             print("Error, no direction specified")
