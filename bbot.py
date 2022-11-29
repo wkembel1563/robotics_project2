@@ -19,14 +19,14 @@ class BehavioralBot:
         self.motorL_port = Port.A
         self.motorR_port = Port.B
         self.lastDistance = 0
-        self.rightMotor_L = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        self.leftMotor_L = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        self.rightMotor_R = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        self.leftMotor_R = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        self.rightMotor_B = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        self.leftMotor_B = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        self.rightMotor_F = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        self.leftMotor_F = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #self.rightMotor_L = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #self.leftMotor_L = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #self.rightMotor_R = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #self.leftMotor_R = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #self.rightMotor_F = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #self.leftMotor_F = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        #self.rightMotor_B = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        #self.leftMotor_B = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
     """
     BEHAVIORS
