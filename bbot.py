@@ -72,12 +72,12 @@ class BehavioralBot:
             elif distance < 55 and distance >= 0:
                 priority = 9
                 control_signal = "slight left"
-            elif distance <= 130 and distance > 100: 
+            elif distance <= 200 and distance > 100: 
                 priority = 9
                 control_signal = "slight right"
-            elif distance <= 200 and distance > 130: 
-                priority = 6
-                control_signal = "slight right"
+            # elif distance <= 200 and distance > 130: 
+            #     priority = 6
+            #     control_signal = "slight right"
             elif self.lastDistance and self.lastDistance >= 10 and self.lastDistance <= 130:
                 if not distance or distance > 500:
                     print("last distance is " , self.lastDistance)
@@ -143,10 +143,10 @@ class BehavioralBot:
     
     def turn_corner(self):
         rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-        rightMotor.run_time(200, 900, then=Stop.HOLD, wait=False)
+        rightMotor.run_time(200, 400, then=Stop.HOLD, wait=False)
 
         leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-        leftMotor.run_time(200, 900, then=Stop.HOLD, wait=True)
+        leftMotor.run_time(200, 400, then=Stop.HOLD, wait=True)
         robot_radius = 0.08565 # radius of robot in (m), defined with caliper
         arc_len = (1/4) * 2 * math.pi * robot_radius
 
@@ -160,8 +160,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
 
 
     """
@@ -177,23 +177,23 @@ class BehavioralBot:
 
         elif control_signal == "slight left":
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(240, 1000, then=Stop.HOLD, wait=False)
+            rightMotor.run_time(300, 500, then=Stop.HOLD, wait=False)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(175, 1000, then=Stop.HOLD, wait=True)
+            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=True)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(175, 700, then=Stop.HOLD, wait=False)
+            rightMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(220, 700, then=Stop.HOLD, wait=True)
+            leftMotor.run_time(220, 500, then=Stop.HOLD, wait=True)
 
         elif control_signal == "slight right":
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(240, 1000, then=Stop.HOLD, wait=False)
+            leftMotor.run_time(300, 500, then=Stop.HOLD, wait=False)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(175, 1000, then=Stop.HOLD, wait=True)
+            rightMotor.run_time(175, 500, then=Stop.HOLD, wait=True)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(175, 700, then=Stop.HOLD, wait=False)
+            leftMotor.run_time(175, 500, then=Stop.HOLD, wait=False)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(220, 700, then=Stop.HOLD, wait=True)
+            rightMotor.run_time(220, 500, then=Stop.HOLD, wait=True)
 
         elif control_signal == "turn corner":
             self.turn_corner()
@@ -229,7 +229,7 @@ class BehavioralBot:
 
     # forward function from project 1
     def forward_one(self):
-        forward_angle = 360
+        forward_angle = 180
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         rightMotor.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=False)
@@ -266,8 +266,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
 
     # turn left 90 degrees function from project 1
     def turn_left(self):
@@ -289,8 +289,8 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
 
-        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=False)
-        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=True)
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-25, then=Stop.HOLD, wait=True)
 
     # move deeper into goal area
     def forward_to_candle(self):
