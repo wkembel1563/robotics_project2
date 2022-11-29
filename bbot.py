@@ -23,10 +23,10 @@ class BehavioralBot:
         self.leftMotor_L = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         self.rightMotor_R = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
         self.leftMotor_R = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        self.rightMotor_F = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        self.leftMotor_F = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-        self.rightMotor_B = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        self.leftMotor_B = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        self.rightMotor_B = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.leftMotor_B = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        self.rightMotor_F = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        self.leftMotor_F = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
 
     """
     BEHAVIORS
