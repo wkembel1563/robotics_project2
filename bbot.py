@@ -18,6 +18,7 @@ class BehavioralBot:
         self.ultrasonic_port = Port.S2 
         self.motorL_port = Port.A
         self.motorR_port = Port.B
+        self.lastDistance = 0
 
     """
     BEHAVIORS
@@ -65,29 +66,32 @@ class BehavioralBot:
         priority = 0
         if distance and not touchSensor.pressed() and not touchSensor2.pressed():
             print("Distance to wall: " + str(distance))
-            if distance <= 70 and distance >= 35:
+            if distance <= 100 and distance >= 55:
                 priority = 9
                 control_signal = "move forward"
-            elif distance < 35 and distance >= 0:
+            elif distance < 55 and distance >= 0:
                 priority = 9
                 control_signal = "slight left"
-            elif distance <= 100 and distance > 70: 
+            elif distance <= 130 and distance > 100: 
                 priority = 9
                 control_signal = "slight right"
-            elif distance <= 130 and distance > 100: 
+            elif distance <= 200 and distance > 130: 
                 priority = 6
                 control_signal = "slight right"
-            else:
-                priority = 2
-                control_signal = "turn right"
+            elif self.lastDistance and self.lastDistance >= 10 and self.lastDistance <= 130:
+                if not distance or distance > 500:
+                    print("last distance is " , self.lastDistance)
+                    priority = 9
+                    control_signal = "turn corner"
         elif distance < 75 and (touchSensor.pressed() or touchSensor2.pressed()):
             priority = 9
             control_signal = "turn left"
         else: # turns right if bump and no distance
             priority = 9
             control_signal = "turn right"
-
-        print("WF: priority" + str(priority) + "signal: " + control_signal)
+        if distance:
+            self.lastDistance = distance
+        # print("WF: priority" + str(priority) + "signal: " + control_signal)
         return priority, control_signal
         
 
@@ -127,6 +131,37 @@ class BehavioralBot:
             control_signal = "do nothing"
 
         return priority, control_signal
+    
+    def reverse(self):
+        # define the motors
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+
+        # reverse first because every time a turn is activated it will come after a collision
+        leftMotor.run_time(300, 900-400, then=Stop.HOLD, wait=False)
+        rightMotor.run_time(300, 900-400, then=Stop.HOLD, wait=True)
+    
+    def turn_corner(self):
+        rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
+        rightMotor.run_time(200, 900, then=Stop.HOLD, wait=False)
+
+        leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
+        leftMotor.run_time(200, 900, then=Stop.HOLD, wait=True)
+        robot_radius = 0.08565 # radius of robot in (m), defined with caliper
+        arc_len = (1/4) * 2 * math.pi * robot_radius
+
+        wheel_radius = 0.033 # defined in in (m) using calipers
+        move_angle = arc_len / wheel_radius
+
+        # convert angle to degrees
+        move_angle_deg = move_angle * (180/math.pi)
+
+        # turn
+        leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
+        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
+
+        leftMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=False)
+        rightMotor.run_angle(speed=90, rotation_angle=move_angle_deg-20, then=Stop.HOLD, wait=True)
 
 
     """
@@ -142,7 +177,7 @@ class BehavioralBot:
 
         elif control_signal == "slight left":
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            rightMotor.run_time(220, 1000, then=Stop.HOLD, wait=False)
+            rightMotor.run_time(240, 1000, then=Stop.HOLD, wait=False)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
             leftMotor.run_time(175, 1000, then=Stop.HOLD, wait=True)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
@@ -152,7 +187,7 @@ class BehavioralBot:
 
         elif control_signal == "slight right":
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
-            leftMotor.run_time(220, 1000, then=Stop.HOLD, wait=False)
+            leftMotor.run_time(240, 1000, then=Stop.HOLD, wait=False)
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
             rightMotor.run_time(175, 1000, then=Stop.HOLD, wait=True)
             leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
@@ -160,18 +195,21 @@ class BehavioralBot:
             rightMotor = Motor(self.motorR_port, positive_direction=Direction.CLOCKWISE, gears=None)
             rightMotor.run_time(220, 700, then=Stop.HOLD, wait=True)
 
+        elif control_signal == "turn corner":
+            self.turn_corner()
+
         elif control_signal == "turn right":
             self.turn_right()
 
         elif control_signal == "turn left":
             self.turn_left()
 
-        # elif control_signal == "orient to candle":
-        #     self.face_candle()
+        elif control_signal == "orient to candle":
+            self.face_candle()
 
-        # elif control_signal == "extinguish fire":
-        #     self.run_fan()
-        #     self.play_celebration(ev3)
+        elif control_signal == "extinguish fire":
+            self.run_fan()
+            self.play_celebration(ev3)
 
         elif control_signal == "do nothing":
             print("Error. Do nothing action givin highest priority.")
@@ -196,29 +234,24 @@ class BehavioralBot:
         leftMotor = Motor(self.motorL_port, positive_direction=Direction.CLOCKWISE, gears=None)
         rightMotor.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=False)
         leftMotor.run_angle(speed=200, rotation_angle=forward_angle, then=Stop.COAST, wait=True)
-        #radius_from_center = .08565
-        #rotational_vel_rad = 3.491
-        #wheel_radius = .028
-        #rotational_vel_deg = rotational_vel_rad * (180/math.pi)
+        # radius_from_center = .08565
+        # rotational_vel_rad = 3.491
+        # wheel_radius = .028
+        # rotational_vel_deg = rotational_vel_rad * (180/math.pi)
 
-        #t = (radius_from_center / (2*rotational_vel_rad * wheel_radius)) * (math.pi/2)
-        #ms = t * 1000
+        # t = (radius_from_center / (2*rotational_vel_rad * wheel_radius)) * (math.pi/2)
+        # ms = t * 1000
 
-        #rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
-        #rightMotor.run_time(375, 1900, then=Stop.HOLD, wait=False)
+        # rightMotor = Motor(Port.A, positive_direction=Direction.CLOCKWISE, gears=None)
+        # rightMotor.run_time(200, 900, then=Stop.HOLD, wait=False)
 
-        #leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
-        #leftMotor.run_time(375, 1915, then=Stop.HOLD, wait=True)
+        # leftMotor = Motor(Port.B, positive_direction=Direction.CLOCKWISE, gears=None)
+        # leftMotor.run_time(200, 900, then=Stop.HOLD, wait=True)
 
     # turn right 90 degrees function from project 1
     def turn_right(self):
-        # define the motors
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-
         # reverse first because every time a turn is activated it will come after a collision
-        leftMotor.run_time(300, 900-400, then=Stop.HOLD, wait=False)
-        rightMotor.run_time(300, 900-400, then=Stop.HOLD, wait=True)
+        self.reverse()
 
         robot_radius = 0.08565 # radius of robot in (m), defined with caliper
         arc_len = (1/4) * 2 * math.pi * robot_radius
@@ -238,13 +271,8 @@ class BehavioralBot:
 
     # turn left 90 degrees function from project 1
     def turn_left(self):
-
-        leftMotor = Motor(self.motorL_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-        rightMotor = Motor(self.motorR_port, positive_direction=Direction.COUNTERCLOCKWISE, gears=None)
-
         # reverse first because every time a turn is activated it will come after a collision
-        leftMotor.run_time(300, 900-400, then=Stop.HOLD, wait=False)
-        rightMotor.run_time(300, 900-400, then=Stop.HOLD, wait=True)
+        self.reverse()
 
         robot_radius = 0.08565 # radius of robot in (m), defined with caliper
         arc_len = (1/4) * 2 * math.pi * robot_radius
