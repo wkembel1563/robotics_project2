@@ -18,8 +18,11 @@ while not goal_reached:
     # get behavior actions and their priorities
     wp, w_control = bot.wander()
     wfp, wf_control = bot.wall_following()
-    gdp, gd_control = bot.goal_detection()
-    exp, ex_control = bot.extinguish()
+    #gdp, gd_control = bot.goal_detection()
+    #exp, ex_control = bot.extinguish()
+    # wfp, wf_control = 0, ""
+    gdp, gd_control = 0, ""
+    exp, ex_control = 0, ""
 
     # decide on a control signal to use
     # wander
