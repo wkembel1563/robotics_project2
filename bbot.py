@@ -19,6 +19,13 @@ class BehavioralBot:
         self.motorL_port = Port.A
         self.motorR_port = Port.B
         self.lastDistance = 0
+        self.initialize_sensors()
+
+    def initialize_sensors(self):
+        self.touchSensor = TouchSensor(self.touch_port)
+        self.touchSensor2 = TouchSensor(self.touch_port2)
+        self.color_sensor = ColorSensor(self.color_port)
+        self.ultrasonic = UltrasonicSensor(self.ultrasonic_port)
 
     """
     BEHAVIORS
@@ -39,13 +46,15 @@ class BehavioralBot:
     """
     def wander(self):
         priority = 0
-        sensor = UltrasonicSensor(self.ultrasonic_port)
-        distance = sensor.distance()
-        touchSensor = TouchSensor(self.touch_port)
-        touchSensor2 = TouchSensor(self.touch_port2)
-        if distance and not touchSensor.pressed() and not touchSensor2.pressed() and distance > 100: #If we are too far away from the wall, Wander.
+        #sensor = UltrasonicSensor(self.ultrasonic_port)
+        #distance = sensor.distance()
+        distance = self.ultrasonic.distance()
+        #touchSensor = TouchSensor(self.touch_port)
+        #touchSensor2 = TouchSensor(self.touch_port2)
+
+        if distance and not self.touchSensor.pressed() and not self.touchSensor2.pressed() and distance > 100: #If we are too far away from the wall, Wander.
             priority = 8
-        elif not distance and not touchSensor.pressed():
+        elif not distance and not self.touchSensor.pressed():
             priority = 8
         else:
             priority = 0
@@ -57,16 +66,17 @@ class BehavioralBot:
         
 
     def wall_following(self):
-        sensor = UltrasonicSensor(self.ultrasonic_port)
-        touchSensor = TouchSensor(self.touch_port)
-        touchSensor2 = TouchSensor(self.touch_port2)
+        #sensor = UltrasonicSensor(self.ultrasonic_port)
+        #touchSensor = TouchSensor(self.touch_port)
+        #touchSensor2 = TouchSensor(self.touch_port2)
 
-        distance = sensor.distance()
+        #distance = sensor.distance()
+        distance = self.ultrasonic.distance()
         ###TEST
         print("WF DIST: " + str(distance))
         control_signal = None
         priority = 0
-        if distance and not touchSensor.pressed() and not touchSensor2.pressed():
+        if distance and not self.touchSensor.pressed() and not self.touchSensor2.pressed():
             print("Distance to wall: " + str(distance))
             if distance <= 100 and distance >= 55:
                 priority = 9
@@ -85,7 +95,7 @@ class BehavioralBot:
                     print("last distance is " , self.lastDistance)
                     priority = 9
                     control_signal = "turn corner"
-        elif distance < 200 and (touchSensor.pressed() or touchSensor2.pressed()):
+        elif distance < 200 and (self.touchSensor.pressed() or self.touchSensor2.pressed()):
             priority = 9
             control_signal = "turn left"
         else: # turns right if bump and no distance
@@ -105,7 +115,8 @@ class BehavioralBot:
 
         # check color sensor
         # high priority if green, otherwise 0
-        if ColorSensor(self.color_port).color() == Color.GREEN and not self.orient_to_candle:
+        #if ColorSensor(self.color_port).color() == Color.GREEN and not self.orient_to_candle:
+        if self.color_sensor.color() == Color.GREEN and not self.orient_to_candle:
             priority = 10
 
         # search for candle 
@@ -124,7 +135,8 @@ class BehavioralBot:
 
         # check color sensor
         # high priority if green tile reached and already moved to candle
-        if ColorSensor(self.color_port).color() == Color.GREEN and self.orient_to_candle:
+        #if ColorSensor(self.color_port).color() == Color.GREEN and self.orient_to_candle:
+        if self.color_sensor.color() == Color.GREEN and self.orient_to_candle:
             priority = 10
 
         if priority == 10:
