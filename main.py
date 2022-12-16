@@ -11,7 +11,7 @@ import math
 
 # Create your objects here.
 ev3 = EV3Brick()
-bot = BehavioralBot()
+#bot = BehavioralBot()
 
 # CONSTS
 right_port = Port.C
